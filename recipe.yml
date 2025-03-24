@@ -44,6 +44,17 @@ stages:
           - cd ..
           - rm -f -r rtl8188eus
 
+      - name: install-mutter
+        type: shell
+        commands:
+          - git clone https://gitlab.gnome.org/GNOME/mutter.git
+          - cd mutter
+          - git revert cbdc3ae9 --no-edit
+          - meson setup builddir
+          - meson configure builddir --prefix=/usr
+          - meson compile -C builddir
+          - meson install -C
+
       - name: nvidia-official-repo
         type: shell
         commands:
