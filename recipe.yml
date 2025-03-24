@@ -34,7 +34,7 @@ stages:
       - name: install-mutter
         type: shell
         commands:
-          - apt install -y git build-essential meson dnf
+          - apt install -y git build-essential meson dnf dnf-plugins-core
           - git clone https://gitlab.gnome.org/GNOME/mutter.git
           - cd mutter
           - git revert cbdc3ae9 --no-commit
@@ -98,7 +98,7 @@ stages:
           - apt remove -y zutty gnome-shell-extension-prefs
           - SUDO_FORCE_REMOVE=yes apt purge -y sudo
           - rm /etc/apt/sources.list.d/nvidia-drivers.list
-          - apt remove -y git build-essential meson dnf
+          - apt remove -y git build-essential meson dnf dnf-plugins-core
 
       # Put your custom actions above this comment
 
