@@ -31,6 +31,21 @@ stages:
       #     - curl -fsSL https://pkgs.tailscale.com/stable/debian/sid.tailscale-keyring.list | tee /etc/apt/sources.list.d/tailscale.list
       #     - apt-get update && apt-get install -y tailscale
 
+      - name: install-mutter
+        type: shell
+        commands:
+          - apt install -y git build-essential meson dnf
+          - git clone https://gitlab.gnome.org/GNOME/mutter.git
+          - cd mutter
+          - git revert cbdc3ae9 --no-commit
+          - dnf builddep -y mutter
+          - meson setup builddir
+          - meson configure builddir --prefix=/usr
+          - meson compile -C builddir
+          - meson install -C builddir
+          - cd ..
+          - rm -f -r mutter
+
       - name: install-rtl8188eus
         type: shell
         commands:
@@ -43,17 +58,6 @@ stages:
           - echo 'blacklist rtl8xxxu' | tee -a '/etc/modprobe.d/realtek.conf'
           - cd ..
           - rm -f -r rtl8188eus
-
-      - name: install-mutter
-        type: shell
-        commands:
-          - git clone https://gitlab.gnome.org/GNOME/mutter.git
-          - cd mutter
-          - git revert cbdc3ae9 --no-commit
-          - meson setup builddir
-          - meson configure builddir --prefix=/usr
-          - meson compile -C builddir
-          - meson install -C
 
       - name: nvidia-official-repo
         type: shell
@@ -88,12 +92,13 @@ stages:
                 - libnvidia-fbc1
                 - nvidia-container-toolkit
 
-      - name: cleanup-nvidia
+      - name: cleanup-custom
         type: shell
         commands:
           - apt remove -y zutty gnome-shell-extension-prefs
           - SUDO_FORCE_REMOVE=yes apt purge -y sudo
           - rm /etc/apt/sources.list.d/nvidia-drivers.list
+          - apt remove -y git build-essential meson dnf
 
       # Put your custom actions above this comment
 
