@@ -31,19 +31,38 @@ stages:
       #     - curl -fsSL https://pkgs.tailscale.com/stable/debian/sid.tailscale-keyring.list | tee /etc/apt/sources.list.d/tailscale.list
       #     - apt-get update && apt-get install -y tailscale
 
-      - name: install-mutter
+      - name: clone-mutter
         type: shell
         commands:
           - apt install -y git build-essential meson
           - git clone https://gitlab.gnome.org/GNOME/mutter.git
           - cd mutter
           - git revert cbdc3ae9 --no-commit
+
+      - name: install-mutter-deps
+        type: shell
+        commands:
+          - mv /etc/sid.sources /etc/apt/sources.list.d/
+          - mv /etc/apt/sources.list.d/vanilla-base.sources /etc/
+          - apt update
+
+          - apt build-dep -y mutter
+
+          - rm /etc/apt/sources.list.d/sid.sources
+          - mv /etc/vanilla-base.sources /etc/apt/sources.list.d/
+          - apt update
+
+      - name: install-mutter
+        type: shell
+        commands:
+          - mkdir builddir
           - meson setup builddir
           - meson configure builddir --prefix=/usr
           - meson compile -C builddir
           - meson install -C builddir
           - cd ..
           - rm -f -r mutter
+          - apt autoremove -y
 
       - name: install-rtl8188eus
         type: shell
