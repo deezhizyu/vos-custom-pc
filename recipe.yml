@@ -35,10 +35,10 @@ stages:
         type: shell
         commands:
           - apt remove -y mutter
-          - wget https://github.com/deezhizyu/mutter/releases/download/48/mutter-custom_48.0_amd64.deb
-          - dpkg -i mutter-custom_48.0_amd64.deb
+          - wget https://github.com/deezhizyu/mutter/releases/latest/download/mutter-custom_48.0_amd64.deb
+          - dpkg -i mutter-custom_48.0_amd64.deb --force-overwrite
           - apt-get install --fix-broken -y
-          - apt-mark hold mutter-custom
+          - apt-mark hold mutter
 
       - name: install-rtl8188eus
         type: shell
