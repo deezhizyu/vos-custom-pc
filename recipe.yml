@@ -31,38 +31,14 @@ stages:
       #     - curl -fsSL https://pkgs.tailscale.com/stable/debian/sid.tailscale-keyring.list | tee /etc/apt/sources.list.d/tailscale.list
       #     - apt-get update && apt-get install -y tailscale
 
-      - name: clone-mutter
+      - name: install-custom-mutter
         type: shell
         commands:
-          - apt install -y git build-essential meson
-          - git clone https://gitlab.gnome.org/GNOME/mutter.git
-          - cd mutter
-          - git revert cbdc3ae9 --no-commit
-
-      - name: install-mutter-deps
-        type: shell
-        commands:
-          - mv /etc/sid.sources /etc/apt/sources.list.d/
-          - mv /etc/apt/sources.list.d/vanilla-base.sources /etc/
-          - apt update
-
-          - apt build-dep -y mutter
-
-          - rm /etc/apt/sources.list.d/sid.sources
-          - mv /etc/vanilla-base.sources /etc/apt/sources.list.d/
-          - apt update
-
-      - name: install-mutter
-        type: shell
-        commands:
-          - mkdir builddir
-          - meson setup builddir
-          - meson configure builddir --prefix=/usr
-          - meson compile -C builddir
-          - meson install -C builddir
-          - cd ..
-          - rm -f -r mutter
-          - apt autoremove -y
+          - apt remove -y mutter
+          - wget https://github.com/deezhizyu/mutter/releases/download/48/mutter-custom_48.0_amd64.deb
+          - dpkg -i mutter-custom_48.0_amd64.deb
+          - apt-get install --fix-broken -y
+          - apt-mark hold mutter-custom
 
       - name: install-rtl8188eus
         type: shell
@@ -77,46 +53,10 @@ stages:
           - cd ..
           - rm -f -r rtl8188eus
 
-      - name: nvidia-official-repo
-        type: shell
-        commands:
-          - echo 'deb [signed-by=/usr/share/keyrings/nvidia-drivers.gpg] https://developer.download.nvidia.com/compute/cuda/repos/debian12/x86_64/ /' > /etc/apt/sources.list.d/nvidia-drivers.list
-          - apt-get update
-
-      - name: unhold-nvidia
-        type: shell
-        commands:
-          - apt-mark unhold nvidia-kernel-open nvidia-driver nvidia-vaapi-driver nvidia-settings nvidia-persistenced nvidia-smi libnvidia-cfg1 libnvidia-glcore libnvidia-glvkspirv libnvidia-gpucomp libnvidia-fbc1 nvidia-container-toolkit
-
-      - name: nvidia-official-driver
-        type: shell
-        commands:
-          - apt-mark hold nvidia-kernel-open nvidia-driver nvidia-vaapi-driver nvidia-settings nvidia-persistenced nvidia-smi libnvidia-cfg1 libnvidia-glcore libnvidia-glvkspirv libnvidia-gpucomp libnvidia-fbc1 nvidia-container-toolkit
-        modules:
-          - name: update-nvidia
-            type: apt
-            source:
-              packages:
-                - nvidia-kernel-open
-                - nvidia-driver
-                - nvidia-vaapi-driver
-                - nvidia-settings
-                - nvidia-persistenced
-                - cuda-drivers
-                - libnvidia-cfg1
-                - libnvidia-glcore
-                - libnvidia-glvkspirv
-                - libnvidia-gpucomp
-                - libnvidia-fbc1
-                - nvidia-container-toolkit
-
       - name: cleanup-custom
         type: shell
         commands:
-          - apt remove -y zutty gnome-shell-extension-prefs
-          - SUDO_FORCE_REMOVE=yes apt purge -y sudo
-          - rm /etc/apt/sources.list.d/nvidia-drivers.list
-          - apt remove -y git build-essential meson
+          - apt remove -y git build-essential dkms
 
       # Put your custom actions above this comment
 
