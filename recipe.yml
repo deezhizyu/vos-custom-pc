@@ -56,7 +56,7 @@ stages:
       - name: cleanup-custom
         type: shell
         commands:
-          - apt remove -y git build-essential dkms
+          - apt remove -y git build-essential
 
       # Put your custom actions above this comment
 
