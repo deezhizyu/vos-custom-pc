@@ -3,5 +3,4 @@ This is custom image for my PC based on the [deezhizyu/vos-custom-base](https://
 ## Additions
 <!-- - [Tailscale](https://tailscale.com/) -->
 - [RTL8188EUS](https://github.com/aircrack-ng/rtl8188eus)
-- Upgraded Nvidia drivers
 - EDID with 75hz refresh rate for my monitor

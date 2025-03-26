@@ -31,15 +31,6 @@ stages:
       #     - curl -fsSL https://pkgs.tailscale.com/stable/debian/sid.tailscale-keyring.list | tee /etc/apt/sources.list.d/tailscale.list
       #     - apt-get update && apt-get install -y tailscale
 
-      - name: install-custom-mutter
-        type: shell
-        commands:
-          - apt remove -y mutter
-          - wget https://github.com/deezhizyu/mutter/releases/latest/download/mutter-custom_48.0_amd64.deb
-          - dpkg --force-overwrite -i mutter-custom_48.0_amd64.deb
-          - apt install --fix-broken -y
-          - apt-mark hold mutter
-
       - name: install-rtl8188eus
         type: shell
         commands:
