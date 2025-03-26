@@ -2,7 +2,7 @@ name: Vanilla OS Custom Image for my PC
 id: vos-custom-pc
 stages:
   - id: build
-    base: ghcr.io/deezhizyu/vos-custom-base:gnome-48
+    base: ghcr.io/deezhizyu/vos-custom-base:main
     singlelayer: false
     labels:
       maintainer: self-maintained
